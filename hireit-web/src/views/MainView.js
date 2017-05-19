@@ -87,12 +87,14 @@ export class MainView extends Component {
       <div className="MainView">
         <Header/>
         <table>
-          {this.renderRowHeader()}
-          {Reflect.ownKeys(this.state.candidates).map((key) => {
-            const candidate = this.state.candidates[key];
-            console.log(`getting ${key} ${candidate.firstName} ${candidate.lastName}`);
-            return this.renderRow(candidate);
-          })}
+          <tbody>
+            {this.renderRowHeader()}
+            {Reflect.ownKeys(this.state.candidates).map((key) => {
+              const candidate = this.state.candidates[key];
+              console.log(`getting ${key} ${candidate.firstName} ${candidate.lastName}`);
+              return this.renderRow(candidate);
+            })}
+          </tbody>
         </table>
       </div>
     );
