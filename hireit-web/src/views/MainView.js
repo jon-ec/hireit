@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Header } from '../components/header'
+import moment from 'moment';
 import * as firebase from 'firebase';
 import './MainView.css';
 
@@ -80,7 +81,6 @@ export class MainView extends Component {
         <th>First Name</th>
         <th>Last Name</th>
         <th>Email</th>
-        <th>Status</th>
         <th>Kit Status</th>
         <th>Starting Date</th>
       </tr>
@@ -88,14 +88,14 @@ export class MainView extends Component {
   };
 
   renderRow = (candidate) => {
+    const formatedDate = moment(candidate.primaryAssignment.startsOn).format('MMM DD YYYY');
     return (
       <tr key={candidate.id}>
         <td>{candidate.firstName}</td>
         <td>{candidate.lastName}</td>
         <td>{candidate.email}</td>
-        <td>{candidate.status}</td>
         <td>{candidate.kitStatus}</td>
-        <td>{candidate.primaryAssignment.startsOn}</td>
+        <td>{formatedDate}</td>
       </tr>
     );
   };
