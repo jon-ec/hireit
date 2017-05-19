@@ -28,8 +28,8 @@ var recentPostsSection = document.getElementById('recent-posts-list');
 var userPostsSection = document.getElementById('user-posts-list');
 var topUserPostsSection = document.getElementById('top-user-posts-list');
 var recentMenuButton = document.getElementById('menu-recent');
-var myPostsMenuButton = document.getElementById('menu-my-posts');
-var myTopPostsMenuButton = document.getElementById('menu-my-top-posts');
+// var myPostsMenuButton = document.getElementById('menu-my-posts');
+// var myTopPostsMenuButton = document.getElementById('menu-my-top-posts');
 var listeningFirebaseRefs = [];
 
 /**
@@ -103,7 +103,6 @@ function createPostElement(postId, title, text, author, authorId, authorPic) {
           '<span class="star">' +
             '<div class="not-starred material-icons">star_border</div>' +
             '<div class="starred material-icons">star</div>' +
-            '<div class="star-count">0</div>' +
           '</span>' +
           '<div class="text"></div>' +
           '<div class="comments-container"></div>' +
@@ -220,7 +219,7 @@ function updateStarredByCurrentUser(postElement, starred) {
  * Updates the number of stars displayed for a post.
  */
 function updateStarCount(postElement, nbStart) {
-  postElement.getElementsByClassName('star-count')[0].innerText = nbStart;
+  // postElement.getElementsByClassName('star-count')[0].innerText = nbStart;
 }
 
 /**
@@ -258,47 +257,32 @@ function deleteComment(postElement, id) {
  * Starts listening for new posts and populates posts lists.
  */
 function startDatabaseQueries() {
-  // [START my_top_posts_query]
-  var myUserId = firebase.auth().currentUser.uid;
-  var topUserPostsRef = firebase.database().ref('user-posts/' + myUserId).orderByChild('starCount');
-  // [END my_top_posts_query]
-  // [START recent_posts_query]
-  var recentPostsRef = firebase.database().ref('posts').limitToLast(100);
-  // [END recent_posts_query]
-  var userPostsRef = firebase.database().ref('user-posts/' + myUserId);
-
+  var recentPostsRef = firebase.database().ref('candidates').limitToLast(100);
+  
   var fetchPosts = function(postsRef, sectionElement) {
     postsRef.on('child_added', function(data) {
-      var author = data.val().author || 'Anonymous';
+      var author = data.val().name || 'Anonymous';
       var containerElement = sectionElement.getElementsByClassName('posts-container')[0];
       containerElement.insertBefore(
-          createPostElement(data.key, data.val().title, data.val().body, author, data.val().uid, data.val().authorPic),
+          createPostElement(data.key, data.val().name, data.val().name, author, data.val().uid, data.val().authorPic),
           containerElement.firstChild);
     });
     postsRef.on('child_changed', function(data) {	
-		var containerElement = sectionElement.getElementsByClassName('posts-container')[0];
-		var postElement = containerElement.getElementsByClassName('post-' + data.key)[0];
-		postElement.getElementsByClassName('mdl-card__title-text')[0].innerText = data.val().title;
-		postElement.getElementsByClassName('username')[0].innerText = data.val().author;
-		postElement.getElementsByClassName('text')[0].innerText = data.val().body;
-		postElement.getElementsByClassName('star-count')[0].innerText = data.val().starCount;
+      var containerElement = sectionElement.getElementsByClassName('posts-container')[0];
+      var postElement = containerElement.getElementsByClassName('post-' + data.key)[0];
+      postElement.getElementsByClassName('mdl-card__title-text')[0].innerText = data.val().name;
+      postElement.getElementsByClassName('username')[0].innerText = data.val().name;
+      postElement.getElementsByClassName('text')[0].innerText = data.val().name;
     });
     postsRef.on('child_removed', function(data) {
-		var containerElement = sectionElement.getElementsByClassName('posts-container')[0];
-		var post = containerElement.getElementsByClassName('post-' + data.key)[0];
-	    post.parentElement.removeChild(post);
+      var containerElement = sectionElement.getElementsByClassName('posts-container')[0];
+      var post = containerElement.getElementsByClassName('post-' + data.key)[0];
+        post.parentElement.removeChild(post);
     });
   };
 
   // Fetching and displaying all posts of each sections.
-  fetchPosts(topUserPostsRef, topUserPostsSection);
   fetchPosts(recentPostsRef, recentPostsSection);
-  fetchPosts(userPostsRef, userPostsSection);
-
-  // Keep track of all Firebase refs we are listening to.
-  listeningFirebaseRefs.push(topUserPostsRef);
-  listeningFirebaseRefs.push(recentPostsRef);
-  listeningFirebaseRefs.push(userPostsRef);
 }
 
 /**
@@ -385,8 +369,8 @@ function showSection(sectionElement, buttonElement) {
   topUserPostsSection.style.display = 'none';
   addPost.style.display = 'none';
   recentMenuButton.classList.remove('is-active');
-  myPostsMenuButton.classList.remove('is-active');
-  myTopPostsMenuButton.classList.remove('is-active');
+  // myPostsMenuButton.classList.remove('is-active');
+  // myTopPostsMenuButton.classList.remove('is-active');
 
   if (sectionElement) {
     sectionElement.style.display = 'block';
@@ -419,7 +403,7 @@ window.addEventListener('load', function() {
     var title = titleInput.value;
     if (text && title) {
       newPostForCurrentUser(title, text).then(function() {
-        myPostsMenuButton.click();
+        // myPostsMenuButton.click();
       });
       messageInput.value = '';
       titleInput.value = '';
@@ -429,12 +413,6 @@ window.addEventListener('load', function() {
   // Bind menu buttons.
   recentMenuButton.onclick = function() {
     showSection(recentPostsSection, recentMenuButton);
-  };
-  myPostsMenuButton.onclick = function() {
-    showSection(userPostsSection, myPostsMenuButton);
-  };
-  myTopPostsMenuButton.onclick = function() {
-    showSection(topUserPostsSection, myTopPostsMenuButton);
   };
   addButton.onclick = function() {
     showSection(addPost);
