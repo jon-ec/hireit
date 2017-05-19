@@ -101,7 +101,7 @@ export class MainView extends Component {
         <table className="table table-hover">
           <tbody>
             {this.renderRowHeader()}
-            {Reflect.ownKeys(this.state.candidates).map((key) => {
+            {this.state.candidates && Reflect.ownKeys(this.state.candidates).map((key) => {
               const candidate = this.state.candidates[key];
               console.log(`getting ${key} ${candidate.firstName} ${candidate.lastName}`);
               return this.renderRow(candidate);
