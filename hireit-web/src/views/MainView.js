@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Header } from '../components/header'
 import * as firebase from 'firebase';
+import './MainView.css';
 
 const config = {
   apiKey: "AIzaSyB-IkA3gA2QVEdkwguWrRh7Be3PGWByzHU",
@@ -83,7 +84,7 @@ export class MainView extends Component {
 
   render() {
     return (
-      <div>
+      <div className="MainView">
         <Header/>
         <table>
           {this.renderRowHeader()}

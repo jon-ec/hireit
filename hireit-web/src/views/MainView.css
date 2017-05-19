@@ -1,0 +1,17 @@
+.MainView {
+
+}
+
+.MainView table {
+  width: 100%;
+}
+
+.MainView table th {
+  text-align: left;
+  padding: 10px;
+}
+
+.MainView table td {
+  text-align: left;
+  padding: 10px;
+}
