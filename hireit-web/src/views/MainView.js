@@ -33,11 +33,14 @@ export class MainView extends Component {
       this.setState({ candidates });
     });
 
-    // candidatesRef.on('child_added', (data) => {
-    //   const candidates = this.state.candidates;
-    //   candidates.push(data.val());
-    //   this.setState({ candidates });
-    // });
+    candidatesRef.on('child_added', (data) => {
+      const candidate = data.val();
+      const candidates = this.state.candidates;
+      if (!candidates[candidate.uid]) {
+        candidates[candidate.uid] = candidate;
+        this.setState({candidates});
+      }
+    });
 
     candidatesRef.on('child_changed', (data) => {
       //this.updateCandidate(data);
