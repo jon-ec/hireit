@@ -13,6 +13,8 @@ const config = {
   messagingSenderId: "561745944632"
 };
 
+const getColor = (status) => status === 'ready' ? 'green' : 'red';
+
 export class MainView extends Component {
 
   constructor() {
@@ -47,10 +49,6 @@ export class MainView extends Component {
     candidatesRef.on('child_changed', (data) => {
       this.updateCandidate(data);
     });
-
-    candidatesRef.on('child_removed', (data) => {
-      this.deleteCandidate(data);
-    });
   };
 
   updateCandidate = (data) => {
@@ -67,12 +65,6 @@ export class MainView extends Component {
     });
 
     this.setState({ candidates: clonedCandidates });
-  };
-
-  deleteCandidate = (data) => {
-    const existing = this.state.candidates;
-    const candidates = [].concat(existing.splice(existing.findIndex(data.id), 1));
-    this.setState({ candidates });
   };
 
   renderRowHeader = () => {
@@ -94,7 +86,7 @@ export class MainView extends Component {
         <td>{candidate.firstName}</td>
         <td>{candidate.lastName}</td>
         <td>{candidate.email}</td>
-        <td>{candidate.kitStatus}</td>
+        <td style={{ color: getColor(candidate.kitStatus) }}>{candidate.kitStatus}</td>
         <td>{formatedDate}</td>
       </tr>
     );
