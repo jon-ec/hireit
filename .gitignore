@@ -19,3 +19,6 @@ hireit-web/.env.production.local
 hireit-web/npm-debug.log*
 hireit-web/yarn-debug.log*
 hireit-web/yarn-error.log*
+
+.idea
+hireit-web/.idea
