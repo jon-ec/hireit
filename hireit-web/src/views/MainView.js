@@ -37,14 +37,14 @@ export class MainView extends Component {
     candidatesRef.on('child_added', (data) => {
       const candidate = data.val();
       const candidates = this.state.candidates;
-      if (!candidates[candidate.uid]) {
-        candidates[candidate.uid] = candidate;
+      if (!candidates[candidate.id]) {
+        candidates[candidate.id] = candidate;
         this.setState({candidates});
       }
     });
 
     candidatesRef.on('child_changed', (data) => {
-      //this.updateCandidate(data);
+      this.updateCandidate(data);
     });
 
     candidatesRef.on('child_removed', (data) => {
@@ -52,9 +52,25 @@ export class MainView extends Component {
     });
   };
 
+  updateCandidate = (data) => {
+    const candidates = this.state.candidates;
+    const candidateToUpdate = data.val();
+
+    const clonedCandidates = Object.assign({}, candidates);
+    Reflect.ownKeys(clonedCandidates).map((key) => {
+      let candidate = this.state.candidates[key];
+      if (candidate.id === candidateToUpdate.id) {
+        candidate = Object.assign({}, candidate, candidateToUpdate);
+        clonedCandidates[key] = candidate;
+      }
+    });
+
+    this.setState({ candidates: clonedCandidates });
+  };
+
   deleteCandidate = (data) => {
     const existing = this.state.candidates;
-    const candidates = [].concat(existing.splice(existing.findIndex(data.uid), 1));
+    const candidates = [].concat(existing.splice(existing.findIndex(data.id), 1));
     this.setState({ candidates });
   };
 
@@ -66,18 +82,20 @@ export class MainView extends Component {
         <th>Email</th>
         <th>Status</th>
         <th>Kit Status</th>
+        <th>Starting Date</th>
       </tr>
     );
   };
 
   renderRow = (candidate) => {
     return (
-      <tr key={candidate.uid}>
+      <tr key={candidate.id}>
         <td>{candidate.firstName}</td>
         <td>{candidate.lastName}</td>
         <td>{candidate.email}</td>
         <td>{candidate.status}</td>
         <td>{candidate.kitStatus}</td>
+        <td>{candidate.primaryAssignment.startsOn}</td>
       </tr>
     );
   };
