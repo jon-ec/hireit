@@ -1,5 +1,6 @@
 {
   "projects": {
-    "dev": "hireit-cd86c"
+    "dev": "hireit-cd86c",
+    "default": "hireit-cd86c"
   }
 }

@@ -17,7 +17,15 @@
 
 // Shortcuts to DOM Elements.
 var messageForm = document.getElementById('message-form');
+
 var messageInput = document.getElementById('new-post-message');
+
+var candidateName = document.getElementById('candidate-name');
+var candidateEmail = document.getElementById('candidate-email');
+var candidateStatus = document.getElementById('candidate-status');
+var candidateKitStatus = document.getElementById('candidate-kit-status');
+var candidateStartDate = document.getElementById('candidate-start-date');
+
 var titleInput = document.getElementById('new-post-title');
 var signInButton = document.getElementById('sign-in-button');
 var signOutButton = document.getElementById('sign-out-button');
@@ -36,14 +44,17 @@ var listeningFirebaseRefs = [];
  * Saves a new post to the Firebase DB.
  */
 // [START write_fan_out]
-function writeNewPost(uid, username, picture, title, body) {
+function writeNewPost(uid, name, email, status, statusKit, startDate) {
   // A post entry.
   var postData = {
-    name: "John Candidate",
+    firstName: name.split(' ')[0],
+    lastName: name.split(' ')[1],
     uid: uid,
-    status: "hired",
-    startingDate: "02-02-2017",
-    kitStatus: "ready"
+    status: status,
+    primaryAssignment:{
+      startsOn: startDate,
+    },
+    kitStatus: statusKit
   };
 
   // Get a key for a new Post.
@@ -84,7 +95,7 @@ function toggleStar(postRef, uid) {
 /**
  * Creates a post element.
  */
-function createPostElement(postId, title, text, author, authorId, authorPic) {
+function createPostElement(postId, title, text, author, authorId, authorPic, kitStatus) {
   var uid = firebase.auth().currentUser.uid;
 
   var html =
@@ -104,6 +115,7 @@ function createPostElement(postId, title, text, author, authorId, authorPic) {
             '<div class="not-starred material-icons">star_border</div>' +
             '<div class="starred material-icons">star</div>' +
           '</span>' +
+          '<div class="text"></div>' +
           '<div class="text"></div>' +
           '<div class="comments-container"></div>' +
           '<form class="add-comment" action="#">' +
@@ -130,6 +142,7 @@ function createPostElement(postId, title, text, author, authorId, authorPic) {
 
   // Set values.
   postElement.getElementsByClassName('text')[0].innerText = text;
+  postElement.getElementsByClassName('text')[1].innerText = "laptop " + (kitStatus != undefined ? kitStatus : "ready");
   postElement.getElementsByClassName('mdl-card__title-text')[0].innerText = title;
   postElement.getElementsByClassName('username')[0].innerText = author || 'Anonymous';
   postElement.getElementsByClassName('avatar')[0].style.backgroundImage = 'url("' +
@@ -261,10 +274,12 @@ function startDatabaseQueries() {
   
   var fetchPosts = function(postsRef, sectionElement) {
     postsRef.on('child_added', function(data) {
-      var author = data.val().name || 'Anonymous';
+      var author = data.val().firstName + " " + data.val().lastName|| 'Anonymous';
+      var kitStatus = data.val().kitStatus;
+      var startsOn = "Starts on " + data.val().primaryAssignment.startsOn;
       var containerElement = sectionElement.getElementsByClassName('posts-container')[0];
       containerElement.insertBefore(
-          createPostElement(data.key, data.val().name, data.val().name, author, data.val().uid, data.val().authorPic),
+          createPostElement(data.key, author, startsOn, author, data.val().uid, data.val().authorPic, kitStatus),
           containerElement.firstChild);
     });
     postsRef.on('child_changed', function(data) {	
@@ -346,15 +361,13 @@ function onAuthStateChanged(user) {
 /**
  * Creates a new post for the current user.
  */
-function newPostForCurrentUser(title, text) {
+function newPostForCurrentUser(name, email, status, statusKit, startDate) {
   // [START single_value_read]
   var userId = firebase.auth().currentUser.uid;
   return firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
     var username = snapshot.val().username;
     // [START_EXCLUDE]
-    return writeNewPost(firebase.auth().currentUser.uid, username,
-        firebase.auth().currentUser.photoURL,
-        title, text);
+    return writeNewPost(firebase.auth().currentUser.uid, name, email, status, statusKit, startDate);
     // [END_EXCLUDE]
   });
   // [END single_value_read]
@@ -399,14 +412,28 @@ window.addEventListener('load', function() {
   // Saves message on form submit.
   messageForm.onsubmit = function(e) {
     e.preventDefault();
-    var text = messageInput.value;
-    var title = titleInput.value;
-    if (text && title) {
-      newPostForCurrentUser(title, text).then(function() {
-        // myPostsMenuButton.click();
+    var name = candidateName.value;
+    var email = candidateEmail.value;
+    var status = candidateStatus.value;
+    var statusKit = candidateKitStatus.value;
+    var startDate = candidateStartDate.value;
+
+    // var candidateName = document.getElementById('candidate-name');
+    // var candidateEmail = document.getElementById('candidate-email');
+    // var candidateStatus = document.getElementById('candidate-status');
+    // var candidateKitStatus = document.getElementById('candidate-kit-status');
+    // var candidateStartDate = document.getElementById('candidate-start-date');
+
+    
+    if (name && email) {
+      newPostForCurrentUser(name, email, status, statusKit, startDate).then(function() {
+        recentMenuButton.click()
       });
-      messageInput.value = '';
-      titleInput.value = '';
+      candidateName.value = '';
+      candidateEmail.value = '';
+      candidateStatus.value = '';
+      candidateKitStatus.value = '';
+      candidateStartDate.value = '';
     }
   };
 
@@ -416,8 +443,11 @@ window.addEventListener('load', function() {
   };
   addButton.onclick = function() {
     showSection(addPost);
-    messageInput.value = '';
-    titleInput.value = '';
+    candidateName.value = '';
+    candidateEmail.value = '';
+    candidateStatus.value = '';
+    candidateKitStatus.value = '';
+    candidateStartDate.value = '';
   };
   recentMenuButton.onclick();
 }, false);
