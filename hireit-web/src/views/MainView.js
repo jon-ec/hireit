@@ -81,12 +81,14 @@ export class MainView extends Component {
 
   renderRow = (candidate) => {
     const formatedDate = moment(candidate.primaryAssignment.startsOn).format('MMM DD YYYY');
+
+    const status = candidate.kitStatus === 'ready' ? 'fa fa-check' : 'fa fa-close';
     return (
       <tr key={candidate.id}>
         <td>{candidate.firstName}</td>
         <td>{candidate.lastName}</td>
-        <td>{candidate.email}</td>
-        <td style={{ color: getColor(candidate.kitStatus) }}>{candidate.kitStatus}</td>
+        <td><i className="fa fa-address-card"></i> {candidate.email}</td>
+        <td style={{ color: getColor(candidate.kitStatus) }}><i className={status}></i></td>
         <td>{formatedDate}</td>
       </tr>
     );
