@@ -104,7 +104,7 @@ export class MainView extends Component {
     return (
       <div className="MainView">
         <Header/>
-        <table>
+        <table className="table table-hover">
           <tbody>
             {this.renderRowHeader()}
             {Reflect.ownKeys(this.state.candidates).map((key) => {

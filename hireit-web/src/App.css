@@ -22,3 +22,20 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+body {
+  background: #000 !important;
+}
+
+header {
+  font-size: 30px;
+  color: #fff;
+}
+table tbody {
+  background: #000;
+  color: #fff;
+}
+.table-hover>tbody>tr:hover {
+  background-color: #aeb5c1;
+  color :#000;
+}
