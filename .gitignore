@@ -1,0 +1,21 @@
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
+# dependencies
+hireit-web/node_modules
+
+# testing
+hireit-web/coverage
+
+# production
+hireit-web/build
+
+# misc
+hireit-web/.DS_Store
+hireit-web/.env.local
+hireit-web/.env.development.local
+hireit-web/.env.test.local
+hireit-web/.env.production.local
+
+hireit-web/npm-debug.log*
+hireit-web/yarn-debug.log*
+hireit-web/yarn-error.log*
