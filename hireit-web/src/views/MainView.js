@@ -57,17 +57,42 @@ export class MainView extends Component {
     this.setState({ candidates });
   };
 
+  renderRowHeader = () => {
+    return (
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Status</th>
+        <th>Kit Status</th>
+      </tr>
+    );
+  };
+
+  renderRow = (candidate) => {
+    return (
+      <tr key={candidate.uid}>
+        <td>{candidate.firstName}</td>
+        <td>{candidate.lastName}</td>
+        <td>{candidate.email}</td>
+        <td>{candidate.status}</td>
+        <td>{candidate.kitStatus}</td>
+      </tr>
+    );
+  };
+
   render() {
     return (
       <div>
         <Header/>
-        <ul>
+        <table>
+          {this.renderRowHeader()}
           {Reflect.ownKeys(this.state.candidates).map((key) => {
             const candidate = this.state.candidates[key];
-            console.log(`getting ${candidate.lastName} ${key}`);
-            return <li key={key}>{candidate.lastName}</li>
+            console.log(`getting ${key} ${candidate.firstName} ${candidate.lastName}`);
+            return this.renderRow(candidate);
           })}
-        </ul>
+        </table>
       </div>
     );
   }
